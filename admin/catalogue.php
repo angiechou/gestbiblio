@@ -87,7 +87,10 @@ $livres = $pdo->query("SELECT * FROM livres ORDER BY id DESC")->fetchAll();
                                     <span class="badge badge-danger">Indisponible (0)</span>[cite: 1]
                                 <?php endif; ?>
                             </td>
+                            
                             <td>
+                                <!-- Bouton pour modifier le stock -->
+                                <a href="modifier.php?id=<?php echo $l['id_livre']; ?>" class="btn-edit">Modifier</a>
                                 <!-- Bouton rouge de retrait avec confirmation JS réglementaire[cite: 3] -->
                                 <a href="catalogue.php?action=retirer&id=<?php echo $l['id']; ?>" class="btn-delete" onclick="return confirm('Êtes-vous certain de vouloir supprimer définitivement ce livre ?');">Retirer</a>[cite: 3]
                             </td>
