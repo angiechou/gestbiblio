@@ -1,5 +1,4 @@
 <?php
-// admin/ajouter.php
 session_start();
 
 if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
@@ -15,11 +14,13 @@ $error = '';
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['ajouter_livre'])) {
     $titre = trim($_POST['titre']);
     $auteur = trim($_POST['auteur']);
+    $stock_total = intval($_POST['stock_total']); // Force la valeur à être un nombre entier
 
+    $stock_dispo = $stock_total;
+    
     if (!empty($titre) && !empty($auteur)) {
         try {
-            // Le stock_total et stock_dispo sont initialisés à 1 par défaut (géré par les valeurs DEFAULT de la base)[cite: 1, 3]
-            $stmt = $pdo->prepare("INSERT INTO livres (titre, auteur, stock_total, stock_dispo) VALUES (?, ?, 1, 1)");
+            $stmt = $pdo->prepare("INSERT INTO livre (titre, auteur, stock_total, stock_dispo) VALUES (?, ?, 1, 1)");
             if ($stmt->execute([$titre, $auteur])) {
                 $success = "Le livre « $titre » a bien été ajouté au catalogue avec un stock initial de 1.";
             }
@@ -61,12 +62,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['ajouter_livre'])) {
                     <label>Auteur/trice(s) du livre</label>
                     <input type="text" name="auteur" placeholder="Ex: Angelo ADANHOUNME" required>
                 </div>
+
+                <div class="form-group">
+                    <label for="stock_total">Stock initial (Nombre d'exemplaires) :</label>
+                    <!-- type="number" min="1" : Empêche l'admin de mettre 0 ou un stock négatif à la création -->
+                    <input type="number" id="stock_total" name="stock_total" min="1" required>
+                </div>
+                
                 <button type="submit" name="ajouter_livre" class="btn-submit">Ajouter l'ouvrage</button>
             </form>
-
-            <div class="note">
-                <strong>N.B. :</strong> Le stock initial du livre est configuré à 1 exemplaire[cite: 1, 3].
-            </div>
         </div>
     </div>
 
