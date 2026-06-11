@@ -1,5 +1,4 @@
 <?php
-// includes/header.php
 // Sécurisation : Vérifier si la session existe, sinon rediriger vers la connexion
 if (!isset($_SESSION['user'])) {
     header("Location: ../index.php");
@@ -9,6 +8,8 @@ if (!isset($_SESSION['user'])) {
 // Définition du chemin de base dynamique pour éviter les erreurs 404 selon si on est dans admin/ ou à la racine
 $base_path = (basename($_SERVER['PHP_SELF']) == 'profil.php') ? '' : '../';
 $avatar_path = $base_path . 'assets/uploads/' . htmlspecialchars($_SESSION['user']['avatar']);
+
+$avatar = $_SESSION['user']['photo'] ? $_SESSION['user']['photo'] : 'default.png';
 ?>
 
 <style>
@@ -27,12 +28,33 @@ $avatar_path = $base_path . 'assets/uploads/' . htmlspecialchars($_SESSION['user
         z-index: 1000;
         color: #333;
     }
-    .header-left h2 { margin: 0; font-size: 20px; }
-    .header-right { position: relative; display: flex; align-items: center; cursor: pointer; }
-    .header-right span { font-weight: bold; margin-right: 15px; }
-    .profile-img { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid #2c3e50; }
     
-    /* Menu déroulant[cite: 3] */
+    .header-left h2 { 
+        margin: 0; 
+        font-size: 20px; 
+    }
+    
+    .header-right { 
+        position: relative; 
+        display: flex; 
+        align-items: center; 
+        cursor: pointer; 
+    }
+    
+    .header-right span { 
+        font-weight: bold; 
+        margin-right: 15px; 
+    }
+    
+    .profile-img {
+        width: 45px; 
+        height: 45px; 
+        border-radius: 50%; 
+        object-fit: cover; 
+        border: 2px solid #2c3e50; 
+    }
+    
+    /* Menu déroulant */
     .dropdown-menu {
         display: none;
         position: absolute;
@@ -45,8 +67,17 @@ $avatar_path = $base_path . 'assets/uploads/' . htmlspecialchars($_SESSION['user
         min-width: 150px;
         overflow: hidden;
     }
-    .dropdown-menu a { display: block; padding: 12px 20px; color: #333; text-decoration: none; border-bottom: 1px solid #eee; }
-    .dropdown-menu a:hover { background-color: #f5f5f5; color: #e74c3c; }
+    .dropdown-menu a { 
+        display: block; 
+        padding: 12px 20px; 
+        color: #333; 
+        text-decoration: none; 
+        border-bottom: 1px solid #eee; 
+    }
+    .dropdown-menu a:hover { 
+        background-color: #f5f5f5; 
+        color: #e74c3c; 
+    }
 </style>
 
 <div class="top-header">
@@ -59,9 +90,17 @@ $avatar_path = $base_path . 'assets/uploads/' . htmlspecialchars($_SESSION['user
         
         <div class="dropdown-menu" id="profileDropdown">
             <a href="<?php echo $base_path; ?>profil.php">Mon Profil</a> <!-- Lien vers le profil[cite: 3] -->
-            <a href="<?php echo $base_path; ?>index.php?action=logout">Déconnexion</a> <!-- Destruction de session[cite: 3] -->
+            <a href="<?php echo $base_path; ?>index.php?action=logout">Déconnexion</a> <!-- Destruction de session -->
         </div>
     </div>
+    <div class="header">
+    <div class="project-name">GESTBIBLIO</div>
+    <div class="user-profile-box">
+        <!-- Affichage de la photo de profil issue de la base de données -->
+        <img src="../uploads/avatars/<?php echo $avatar; ?>" alt="Avatar" class="avatar-img" style="width: 40px; height: 40px; border-radius: 50%;">
+        <span>Bienvenue, <strong><?php echo htmlspecialchars($_SESSION['user']['username']); ?></strong> (<?php echo strtoupper($_SESSION['user']['role']); ?>)</span>
+    </div>
+</div>
 </div>
 
 <script>
