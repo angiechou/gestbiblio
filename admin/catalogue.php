@@ -17,7 +17,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'retirer' && isset($_GET['id_li
 
     try {
         // Récupérer les informations de stock du livre pour le contrôle de sécurité
-        $stmtCheck = $pdo->prepare("SELECT titre, stock_total, stock_dispo FROM livres WHERE id_livre = ?");
+        $stmtCheck = $pdo->prepare("SELECT titre, stock_total, stock_dispo FROM livre WHERE id_livre = ?");
         $stmtCheck->execute([$livre_id]);
         $livre = $stmtCheck->fetch();
 
@@ -27,7 +27,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'retirer' && isset($_GET['id_li
                 $erreur = "Action interdite : Le livre « {$livre['titre']} » est en cours d'emprunt et ne peut pas être retiré.";[cite: 1, 3]
             } else {
                 // Suppression autorisée
-                $stmtDelete = $pdo->prepare("DELETE FROM livres WHERE id_livre = ?");
+                $stmtDelete = $pdo->prepare("DELETE FROM livre WHERE id_livre = ?");
                 $stmtDelete->execute([$livre_id]);
                 $message = "Le livre « {$livre['titre']} » a été retiré avec succès du catalogue.";
             }
@@ -38,7 +38,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'retirer' && isset($_GET['id_li
 }
 
 // Récupération de l'ensemble du catalogue
-$livres = $pdo->query("SELECT * FROM livres ORDER BY id DESC")->fetchAll();
+$livres = $pdo->query("SELECT * FROM livre ORDER BY id_livre DESC")->fetchAll();
 ?>
 
 <!DOCTYPE html>

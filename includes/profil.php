@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $new_username = trim($_POST['username']);
         $new_email = trim($_POST['email']);
         
-        $stmt = $pdo->prepare("UPDATE utilisateurs SET username = ?, email = ? WHERE id = ?");
+        $stmt = $pdo->prepare("UPDATE utilisateur SET username = ?, email = ? WHERE id_utilisateur = ?");
         if ($stmt->execute([$new_username, $new_email, $user_id])) {
             $_SESSION['user']['username'] = $new_username;
             $_SESSION['user']['email'] = $new_email;
@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         
         if ($new_password === $confirm_password) {
             $hashed_pwd = password_hash($new_password, PASSWORD_DEFAULT); // Hachage de la nouvelle valeur[cite: 3]
-            $stmt = $pdo->prepare("UPDATE utilisateurs SET password = ? WHERE id = ?");
+            $stmt = $pdo->prepare("UPDATE utilisateur SET password = ? WHERE id_utilisateur = ?");
             if ($stmt->execute([$hashed_pwd, $user_id])) {
                 $message = "Mot de passe modifié avec succès.";
             }
@@ -51,8 +51,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     // 3. Changement de la photo de profil
-    if (isset($_POST['update_avatar']) && isset($_FILES['avatar'])) {
-        $file = $_FILES['avatar'];
+    if (isset($_POST['update_avatar']) && isset($_FILES['photo'])) {
+        $file = $_FILES['photo'];
         $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
         $allowed_ext = ['jpg', 'png']; // Filtrage impératif[cite: 1]
         
@@ -67,9 +67,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
             
             if (move_uploaded_file($file['tmp_name'], $destination)) {
-                $stmt = $pdo->prepare("UPDATE utilisateurs SET avatar = ? WHERE id = ?");
+                $stmt = $pdo->prepare("UPDATE utilisateur SET photo = ? WHERE id_utilisateur = ?");
                 if ($stmt->execute([$new_filename, $user_id])) {
-                    $_SESSION['user']['avatar'] = $new_filename; // S'actualise instantanément[cite: 3]
+                    $_SESSION['user']['photo'] = $new_filename; // S'actualise instantanément[cite: 3]
                     $message = "Photo de profil mise à jour.";
                 }
             } else {
@@ -103,10 +103,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <div class="grid-container">
             <!-- Formulaire Avatar -->
             <div class="card" style="text-align: center;">
-                <img src="assets/uploads/<?php echo htmlspecialchars($_SESSION['user']['avatar']); ?>" alt="Avatar" style="width:120px; height:120px; border-radius:50%; object-fit:cover; margin-bottom:15px; border:3px solid #2c3e50;">
+                <img src="assets/uploads/<?php echo htmlspecialchars($_SESSION['user']['photo']); ?>" alt="Avatar" style="width:120px; height:120px; border-radius:50%; object-fit:cover; margin-bottom:15px; border:3px solid #2c3e50;">
                 <form action="profil.php" method="POST" enctype="multipart/form-data">
                     <div class="form-group">
-                        <input type="file" name="avatar" required accept=".jpg, .png">
+                        <input type="file" name="photo" required accept=".jpg, .png">
                     </div>
                     <button type="submit" name="update_avatar" class="btn">Changer la photo</button>
                 </form>

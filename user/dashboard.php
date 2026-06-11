@@ -13,8 +13,8 @@ $today = date('Y-m-d');
 
 // Récupération des emprunts de l'utilisateur connecté avec les infos du livre
 $query = "SELECT e.*, l.titre, l.auteur 
-          FROM emprunts e 
-          JOIN livres l ON e.id_livre = l.id_livre 
+          FROM emprunt e 
+          JOIN livre l ON e.id_livre = l.id_livre 
           WHERE e.id_utilisateur = ? 
           ORDER BY e.date_demande DESC";
 $stmt = $pdo->prepare($query);
