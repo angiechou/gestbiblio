@@ -13,15 +13,15 @@ $message = null;
 $erreur = '';
 
 // Action de validation de l'emprunt
-if (isset($_GET['action']) && $_GET['action'] == 'confirmer' && isset($_GET['id'])) {
-    $emprunt_id = intval($_GET['id']);
+if (isset($_GET['action']) && $_GET['action'] == 'confirmer' && isset($_GET['id_livre'])) {
+    $emprunt_id = intval($_GET['id_livre']);
 
     try {
         // Commencer une transaction pour sécuriser la double opération (Update Emprunt + Update Stock)
         $pdo->beginTransaction();
 
         // Récupérer l'ID du livre associé à cet emprunt
-        $stmtEmp = $pdo->prepare("SELECT livre_id FROM emprunter WHERE id_utilisateur = ? AND statut = 'en_attente'");
+        $stmtEmp = $pdo->prepare("SELECT id_livre FROM emprunter WHERE id_utilisateur = ? AND statut = 'en_attente'");
         $stmtEmp->execute([$id_emprunt]);
         $emprunt = $stmtEmp->fetch();
 

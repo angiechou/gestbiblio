@@ -9,7 +9,7 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'user') {
 require '../config/database.php';
 
 // Récupérer la liste complète des livres[cite: 1]
-$query = "SELECT * FROM livres ORDER BY titre ASC";
+$query = "SELECT * FROM livre ORDER BY titre ASC";
 $livres = $pdo->query($query)->fetchAll();
 ?>
 

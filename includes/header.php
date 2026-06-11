@@ -7,7 +7,7 @@ if (!isset($_SESSION['user'])) {
 
 // Définition du chemin de base dynamique pour éviter les erreurs 404 selon si on est dans admin/ ou à la racine
 $base_path = (basename($_SERVER['PHP_SELF']) == 'profil.php') ? '' : '../';
-$avatar_path = $base_path . 'assets/uploads/' . htmlspecialchars($_SESSION['user']['avatar']);
+$avatar_path = $base_path . 'assets/uploads/' . htmlspecialchars($_SESSION['user']['photo']);
 
 $avatar = $_SESSION['user']['photo'] ? $_SESSION['user']['photo'] : 'default.png';
 ?>
@@ -86,7 +86,7 @@ $avatar = $_SESSION['user']['photo'] ? $_SESSION['user']['photo'] : 'default.png
     </div>
     <div class="header-right" onclick="toggleDropdown()">
         <span><?php echo htmlspecialchars($_SESSION['user']['username']); ?></span>
-        <img src="<?php echo $avatar_path; ?>" alt="Avatar" class="profile-img">
+        <img src="<?php echo $avatar_path; ?>" alt="Photo" class="profile-img">
         
         <div class="dropdown-menu" id="profileDropdown">
             <a href="<?php echo $base_path; ?>profil.php">Mon Profil</a> <!-- Lien vers le profil[cite: 3] -->
@@ -97,7 +97,7 @@ $avatar = $_SESSION['user']['photo'] ? $_SESSION['user']['photo'] : 'default.png
     <div class="project-name">GESTBIBLIO</div>
     <div class="user-profile-box">
         <!-- Affichage de la photo de profil issue de la base de données -->
-        <img src="../uploads/avatars/<?php echo $avatar; ?>" alt="Avatar" class="avatar-img" style="width: 40px; height: 40px; border-radius: 50%;">
+        <img src="../uploads/avatars/<?php echo $avatar; ?>" alt="Photo" class="avatar-img" style="width: 40px; height: 40px; border-radius: 50%;">
         <span>Bienvenue, <strong><?php echo htmlspecialchars($_SESSION['user']['username']); ?></strong> (<?php echo strtoupper($_SESSION['user']['role']); ?>)</span>
     </div>
 </div>

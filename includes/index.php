@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $hashed_password = password_hash($password, PASSWORD_DEFAULT); //
         
         try {
-            $stmt = $pdo->prepare("INSERT INTO utilisateur (username, email, password) VALUES (?, ?, ?)"); //[cite: 1]
+            $stmt = $pdo->prepare("INSERT INTO utilisateur (username, email, password) VALUES (?, ?, ?)"); 
             if ($stmt->execute([$username, $email, $hashed_password])) {
                 // Récupération de l'ID généré pour la connexion automatique
                 $user_id = $pdo->lastInsertId();
@@ -54,12 +54,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['login'])) {
         $identifiant = trim($_POST['identifiant']); // Peut être l'email ou le username
         $password = trim($_POST['password']);
-        
         $stmt = $pdo->prepare("SELECT * FROM utilisateur WHERE username = ? OR email = ?"); //
         $stmt->execute([$identifiant, $identifiant]);
         $user = $stmt->fetch();
         
-        if ($user && password_verify($password, $user['password'])) { //[cite: 3]
+        if ($user && password_verify($password, $user['password'])) { //
             // Stockage des informations en session[cite: 1]
             $_SESSION['user'] = [
                 'id_utilisateur' => $user['id_utilisateur'],
@@ -77,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
             exit;
         } else {
-            $erreur = "Identifiants incorrects"; // Message d'erreur défini dans la feuille de route[cite: 3]
+            $erreur = "Identifiants incorrects"; // Message d'erreur défini dans la feuille de route
         }
     }
 }

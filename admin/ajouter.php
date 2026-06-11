@@ -20,9 +20,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['ajouter_livre'])) {
     
     if (!empty($titre) && !empty($auteur)) {
         try {
-            $stmt = $pdo->prepare("INSERT INTO livre (titre, auteur, stock_total, stock_dispo) VALUES (?, ?, 1, 1)");
+            $stmt = $pdo->prepare("INSERT INTO livre (titre, auteur, stock_total, stock_dispo) VALUES (?, ?, ?, ?)");
             if ($stmt->execute([$titre, $auteur])) {
-                $success = "Le livre « $titre » a bien été ajouté au catalogue avec un stock initial de 1.";
+                $success = "Le livre « $titre » a bien été ajouté au catalogue.";
             }
         } catch (PDOException $e) {
             $error = "Erreur lors de l'ajout du livre : " . $e->getMessage();
@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['ajouter_livre'])) {
 <head>
     <meta charset="UTF-8">
     <title>Ajouter un Livre - GESTBIBLIO</title>
-    <link rel = "stylesheet " href ="../styles/styles.css">    
+    <link rel = "stylesheet" href ="../styles/styles.css">    
 </head>
 <body>
 
