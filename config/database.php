@@ -1,1 +1,17 @@
+<?php
 
+$host = 'localhost';
+$dbname = 'bibliotheque';
+$username = 'root';
+$password = ''; // Laissez vide si vous utilisez XAMPP sous Windows
+
+try {
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password, [
+        PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FET<CH_ASSOC,
+        PDO::ATTR_EMULATE_PREPARES   => false,
+    ]);
+} catch (PDOException $e) {
+    die("Erreur de connexion à la base de données : " . $e->getMessage());
+}
+?>
