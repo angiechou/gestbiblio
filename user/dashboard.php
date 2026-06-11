@@ -1,5 +1,4 @@
 <?php
-// user/dashboard.php
 session_start();
 
 if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'user') {
@@ -9,14 +8,14 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'user') {
 
 require '../config/database.php';
 
-$user_id = $_SESSION['user']['id'];
+$user_id = $_SESSION['user']['id_utilisateur'];
 $today = date('Y-m-d');
 
 // Récupération des emprunts de l'utilisateur connecté avec les infos du livre
 $query = "SELECT e.*, l.titre, l.auteur 
           FROM emprunts e 
-          JOIN livres l ON e.livre_id = l.id 
-          WHERE e.utilisateur_id = ? 
+          JOIN livres l ON e.id_livre = l.id_livre 
+          WHERE e.id_utilisateur = ? 
           ORDER BY e.date_demande DESC";
 $stmt = $pdo->prepare($query);
 $stmt->execute([$user_id]);
@@ -29,8 +28,8 @@ $mes_emprunts = $stmt->fetchAll();
     <meta charset="UTE-8">
     <title>Mon Espace - GESTBIBLIO</title>
     <link rel ="stylesheet" href="../styles/styles.css">
-
 </head>
+    
 <body>
     <body>
 
