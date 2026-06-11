@@ -3,7 +3,7 @@
 $host = 'localhost';
 $dbname = 'bibliotheque';
 $username = 'root';
-$password = ''; // Laissez vide si vous utilisez XAMPP sous Windows
+$password = '';
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password, [
