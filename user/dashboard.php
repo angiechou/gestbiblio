@@ -36,43 +36,45 @@ $mes_emprunts = $stmt->fetchAll();
     <?php include '../includes/sidebar.php'; ?>
     <?php include '../includes/header.php'; ?>
 
-    <div class="main-content">
-        <h2>Validation des demandes d'emprunts</h2>
-        <p>Veuillez confirmer ou rejeter les flux de demandes initiés par les étudiants de l'établissement.</p>
+        <div class="main-content">
+        <h2>Tableau de bord de l'utilisateur</h2>
+        <p>Suivez l'état de validation et la date limite de retour de vos emprunts.</p>
 
-        <?php if ($message): ?> <div class="alert alert-success"><?php echo htmlspecialchars($message); ?></div> <?php endif; ?>
-        <?php if ($erreur): ?> <div class="alert alert-danger"><?php echo htmlspecialchars($erreur); ?></div> <?php endif; ?>
+        <?php if (isset($_GET['msg']) && $_GET['msg'] == 'success'): ?>
+            <div class="alert">Votre demande d'emprunt a été envoyée avec succès.</div>
+        <?php endif; ?>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>Date demande</th>
-                    <th>Nom de l'étudiant</th>
-                    <th>Ouvrage sollicité</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php if (count($demandes) > 0): ?>
-                    <?php foreach ($demandes as $d): ?>
-                        <tr>
-                            <td><?php echo date('d/m/Y H:i', strtotime($d['date_demande'])); ?></td>[cite: 2, 3]
-                            <td><strong><?php echo htmlspecialchars($d['username']); ?></strong> <br><small style="color: #7f8c8d;"><?php echo htmlspecialchars($d['email']); ?></small></td>
-                            <td>« <?php echo htmlspecialchars($d['titre']); ?> »</td>[cite: 3]
-                            <td>
-                                <a href="demandes.php?action=confirmer&id=<?php echo $d['id']; ?>" class="btn-validate">Confirmer l'emprunt</a>[cite: 3]
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <tr>
-                        <td colspan="4" style="text-align: center; color: #7f8c8d; padding: 30px;">Aucune requête d'emprunt en attente de confirmation pour le moment.</td>
-                    </tr>
-                <?php endif; ?>
-            </tbody>
-        </table>
+        <div class="grid-cards">
+            <?php if (count($mes_emprunts) > 0): ?>
+                <?php foreach ($mes_emprunts as $emp): ?>
+                    <div class="book-card">
+                        <div class="book-icon">📚</div>
+                        <div class="book-info">
+                            <div class="book-title"><?php echo htmlspecialchars($emp['titre']); ?></div>
+                            <div class="book-author"><?php echo htmlspecialchars($emp['auteur']); ?></div>
+                        </div>
+                        
+                        <?php if ($emp['statut'] === 'en_attente'): ?>
+                            <div class="status-bar status-pending">En attente de confirmation</div>
+                        
+                        <?php elseif ($emp['statut'] === 'confirme'): ?>
+                            <!-- Ciblage de la colonne 'date_retour' de votre dump SQL -->
+                            <?php if ($today > $emp['date_retour']): ?>
+                                <div class="status-bar status-expired">Délai atteint<br>Plus accessible</div>
+                            <?php else: ?>
+                                <div class="status-bar status-active">Emprunté<br>Fin : <?php echo date('d/m/Y', strtotime($emp['date_retour'])); ?></div>
+                            <?php endif; ?>
+                            
+                        <?php elseif ($emp['statut'] === 'rendu'): ?>
+                            <!-- Prise en compte du statut 'rendu' spécifié dans votre ENUM SQL -->
+                            <div class="status-bar status-returned" style="background-color: #3498db; color: white; padding: 12px; font-weight: bold; font-size: 13px; text-transform: uppercase;">Livre Retourné</div>
+                        <?php endif; ?>
+                    </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <p style="color: #7f8c8d; grid-column: 1 / -1;">Vous n'avez effectué aucune demande d'emprunt pour le moment.</p>
+            <?php endif; ?>
+        </div>
     </div>
-
 </body>
 </html>
-
