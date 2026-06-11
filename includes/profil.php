@@ -1,5 +1,4 @@
 <?php
-// profil.php
 session_start();
 require 'config/database.php';
 
@@ -8,14 +7,19 @@ if (!isset($_SESSION['user'])) {
     exit;
 }
 
-$user_id = $_SESSION['user']['id'];
+$user_id = $_SESSION['user']['id_utilisateur'];
 $message = '';
 $erreur = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $username = $_POST['username'];
+    $email = $_POST['email'];
+    $nom_photo = $_SESSION['user']['photo']; // Par défaut, on garde l'ancienne
 
 // Traitement des formulaires de mise à jour
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     
-    // 1. Modification des données textuelles (Username & Email)[cite: 3]
+    // 1. Modification des données textuelles (Username & Email)
     if (isset($_POST['update_info'])) {
         $new_username = trim($_POST['username']);
         $new_email = trim($_POST['email']);
@@ -30,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 
-    // 2. Changement de mot de passe[cite: 3]
+    // 2. Changement de mot de passe
     if (isset($_POST['update_password'])) {
         $new_password = $_POST['new_password'];
         $confirm_password = $_POST['confirm_password'];
@@ -46,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 
-    // 3. Changement de la photo de profil (Avatar)[cite: 3]
+    // 3. Changement de la photo de profil
     if (isset($_POST['update_avatar']) && isset($_FILES['avatar'])) {
         $file = $_FILES['avatar'];
         $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
