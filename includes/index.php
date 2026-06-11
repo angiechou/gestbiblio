@@ -1,9 +1,18 @@
 <?php
-// index.php
 session_start();
+
+if (isset($_SESSION['user'])) {
+    if ($_SESSION['user']['role'] === 'admin') {
+        header("Location: admin/dashboard.php");
+    } else {
+        header("Location: user/dashboard.php");
+    }
+    exit;
+}
+
 require 'config/database.php';
 
-$erreur = '';
+$erreur = null;
 $mode = isset($_GET['action']) && $_GET['action'] == 'inscription' ? 'inscription' : 'connexion';
 
 // Traitement du formulaire
@@ -19,19 +28,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $hashed_password = password_hash($password, PASSWORD_DEFAULT); //
         
         try {
-            $stmt = $pdo->prepare("INSERT INTO utilisateurs (username, email, password) VALUES (?, ?, ?)"); //[cite: 1]
+            $stmt = $pdo->prepare("INSERT INTO utilisateur (username, email, password) VALUES (?, ?, ?)"); //[cite: 1]
             if ($stmt->execute([$username, $email, $hashed_password])) {
                 // Récupération de l'ID généré pour la connexion automatique
                 $user_id = $pdo->lastInsertId();
                 
                 // Connexion automatique après inscription
                 $_SESSION['user'] = [
-                    'id' => $user_id,
+                    'id_utilisateur' => $user_id,
                     'username' => $username,
                     'email' => $email,
-                    'role' => 'user', // Rôle par défaut[cite: 3]
-                    'avatar' => 'default.png'
-                ]; //[cite: 1]
+                    'role' => 'user', // Rôle par défaut
+                    'photo' => 'default.png'
+                ];
                 
                 header('Location: user/dashboard.php');
                 exit;
@@ -43,21 +52,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // --- Traitement de la CONNEXION ---
     if (isset($_POST['login'])) {
-        $identifiant = trim($_POST['identifiant']); // Peut être l'email ou le username[cite: 2]
+        $identifiant = trim($_POST['identifiant']); // Peut être l'email ou le username
         $password = trim($_POST['password']);
         
-        $stmt = $pdo->prepare("SELECT * FROM utilisateurs WHERE username = ? OR email = ?"); //[cite: 3]
+        $stmt = $pdo->prepare("SELECT * FROM utilisateur WHERE username = ? OR email = ?"); //
         $stmt->execute([$identifiant, $identifiant]);
         $user = $stmt->fetch();
         
         if ($user && password_verify($password, $user['password'])) { //[cite: 3]
             // Stockage des informations en session[cite: 1]
             $_SESSION['user'] = [
-                'id' => $user['id'],
+                'id_utilisateur' => $user['id_utilisateur'],
                 'username' => $user['username'],
                 'email' => $user['email'],
                 'role' => $user['role'],
-                'avatar' => $user['avatar']
+                'photo' => $user['photo']
             ];
             
             // Redirection dynamique selon le rôle
@@ -80,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GESTBIBLIO - Authentification</title>
-    <link rel = "stylesheet " href ="../styles/styles.css">        
+    <link rel = "stylesheet" href ="../styles/styles.css">        
 </head>
 <body>
 
