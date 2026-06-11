@@ -1,5 +1,4 @@
 <?php
-// admin/catalogue.php
 session_start();
 
 if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
@@ -13,12 +12,12 @@ $message = '';
 $erreur = '';
 
 // Traitement de l'action de suppression (Retrait)
-if (isset($_GET['action']) && $_GET['action'] == 'retirer' && isset($_GET['id'])) {
-    $livre_id = intval($_GET['id']);
+if (isset($_GET['action']) && $_GET['action'] == 'retirer' && isset($_GET['id_livre'])) {
+    $livre_id = intval($_GET['id_livre']);
 
     try {
         // Récupérer les informations de stock du livre pour le contrôle de sécurité
-        $stmtCheck = $pdo->prepare("SELECT titre, stock_total, stock_dispo FROM livres WHERE id = ?");
+        $stmtCheck = $pdo->prepare("SELECT titre, stock_total, stock_dispo FROM livres WHERE id_livre = ?");
         $stmtCheck->execute([$livre_id]);
         $livre = $stmtCheck->fetch();
 
@@ -28,7 +27,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'retirer' && isset($_GET['id'])
                 $erreur = "Action interdite : Le livre « {$livre['titre']} » est en cours d'emprunt et ne peut pas être retiré.";[cite: 1, 3]
             } else {
                 // Suppression autorisée
-                $stmtDelete = $pdo->prepare("DELETE FROM livres WHERE id = ?");
+                $stmtDelete = $pdo->prepare("DELETE FROM livres WHERE id_livre = ?");
                 $stmtDelete->execute([$livre_id]);
                 $message = "Le livre « {$livre['titre']} » a été retiré avec succès du catalogue.";
             }
@@ -76,7 +75,7 @@ $livres = $pdo->query("SELECT * FROM livres ORDER BY id DESC")->fetchAll();
                 <?php if (count($livres) > 0): ?>
                     <?php foreach ($livres as $l): ?>
                         <tr>
-                            <td>#<?php echo $l['id']; ?></td>
+                            <td>#<?php echo $l['id_livre']; ?></td>
                             <td><strong><?php echo htmlspecialchars($l['titre']); ?></strong></td>
                             <td><?php echo htmlspecialchars($l['auteur']); ?></td>
                             <td><?php echo $l['stock_total']; ?></td>
@@ -92,7 +91,7 @@ $livres = $pdo->query("SELECT * FROM livres ORDER BY id DESC")->fetchAll();
                                 <!-- Bouton pour modifier le stock -->
                                 <a href="modifier.php?id=<?php echo $l['id_livre']; ?>" class="btn-edit">Modifier</a>
                                 <!-- Bouton rouge de retrait avec confirmation JS réglementaire[cite: 3] -->
-                                <a href="catalogue.php?action=retirer&id=<?php echo $l['id']; ?>" class="btn-delete" onclick="return confirm('Êtes-vous certain de vouloir supprimer définitivement ce livre ?');">Retirer</a>[cite: 3]
+                                <a href="catalogue.php?action=retirer&id=<?php echo $l['id_livre']; ?>" class="btn-delete" onclick="return confirm('Êtes-vous certain de vouloir supprimer définitivement ce livre ?');">Retirer</a>[cite: 3]
                             </td>
                         </tr>
                     <?php endforeach; ?>
