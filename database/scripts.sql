@@ -11,7 +11,7 @@ CREATE TABLE `utilisateur` (
 )
 
 CREATE TABLE `livre` (
-  `id_livre` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  `id_livre` int PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `titre` varchar(255) NOT NULL,
   `auteur` varchar(255) NOT NULL,
   `stock_total` int(11) NOT NULL,
@@ -21,7 +21,7 @@ CREATE TABLE `livre` (
 CREATE TABLE `emprunter` (
   `id_emprunt` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `id_utilisateur` int(11) NOT NULL,
-  `id_livre` int(11) NOT NULL,
+  `id_livre` int NOT NULL,
   `date_demande` datetime DEFAULT CURRENT_TIMESTAMP,
   `date_retour` date DEFAULT NULL,
   `statut` enum('en_attente','confirme','rendu') DEFAULT 'en_attente',
