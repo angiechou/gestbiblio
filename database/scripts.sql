@@ -1,4 +1,5 @@
-CREATE DATABASE bibliotheque;
+CREATE DATABASE IF NOT EXISTS bibliotheque;
+USE bibliotheque;
 
 CREATE TABLE `utilisateur` (
   `id_utilisateur` int(11) PRIMARY KEY AUTO_INCREMENT NOT NULL,
@@ -7,7 +8,7 @@ CREATE TABLE `utilisateur` (
   `password` varchar(225) NOT NULL,
   `photo` varchar(255) DEFAULT 'default.png',
   `role` enum('user','admin') DEFAULT 'user',
-  `date_creation` datetime DEFAULT curdate()
+  `date_creation` datetime DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE `livre` (
