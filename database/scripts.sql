@@ -1,7 +1,5 @@
 CREATE DATABASE bibliotheque;
 
-USE biblotheque;
-
 CREATE TABLE `utilisateur` (
   `id_utilisateur` int(11) PRIMARY KEY AUTO_INCREMENT NOT NULL,
   `username` varchar(100) NOT NULL,
