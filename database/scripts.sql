@@ -1,4 +1,4 @@
-CREATE DATABASE bibliotheque ;
+CREATE DATABASE bibliotheque;
 
 CREATE TABLE `utilisateur` (
   `id_utilisateur` int(11) NOT NULL,
@@ -31,5 +31,10 @@ CREATE TABLE `emprunter` (
   FOREIGN KEY (`id_livre`) REFERENCES `livre`(`id_livre`) ON DELETE CASCADE
 )
 
-INSERT INTO `utilisateur` (`id_utilisateur`, `username`, `email`, `password`, `photo`, `role`, `date_creation`) VALUES
-(1, 'admin', 'admin@gestbiblio.com', 'admin123', 'default.png', 'admin', '2026-06-11 21:03:35');
+-- Un compte admin est crée directement pour accès unique
+INSERT INTO utilisateur (username, email, password, photo, role, date_creation ) VALUES
+( 'admin', 'admin@gestbiblio.com', 'admin123', 'default.png', 'admin', NOW());
+
+-- Ajout de livre (Facultatif)
+INSERT INTO livre (titre, auteur, stock_total, stock_dispo, date_creation) 
+VALUES ('La Sécrétaire Particulière', 'Jean Pliya', 10, 10, NOW());

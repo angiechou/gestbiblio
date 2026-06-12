@@ -56,7 +56,7 @@ $livres = $pdo->query("SELECT * FROM livre ORDER BY id_livre DESC")->fetchAll();
 <head>
     <meta charset="UTF-8">
     <title>Gestion Catalogue - GESTBIBLIO</title>
-    <link rel ="stylesheed" href="../styles/styles.css">
+    <link rel ="stylesheet" href="../styles/styles.css">
 </head>
 <body>
 

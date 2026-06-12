@@ -33,7 +33,7 @@ try{
 <html lang="fr">
 <head> 
     <meta charset="UTF-8">
-    <link rel ="stylesheets" href="../styles/styles.css">
+    <link rel ="stylesheet" href="../styles/styles.css">
     <style>
         .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 20px; }
         .stat-card { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); text-align: center; }
