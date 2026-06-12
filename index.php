@@ -10,7 +10,7 @@ if (isset($_SESSION['user'])) {
     exit;
 }
 
-require '../config/database.php';
+require '/config/database.php';
 
 $erreur = null;
 $mode = isset($_GET['action']) && $_GET['action'] == 'inscription' ? 'inscription' : 'connexion';
