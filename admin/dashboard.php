@@ -2,7 +2,7 @@
 
 session_start();
 
-if (!issert($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin'){
+if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin'){
     header("Location: ../index.php");
     exit;
 }
@@ -11,8 +11,10 @@ require '../config/database.php';
 
 try{
     // 1. Nombre total de livres en stock
-     $stmtTotal = $pdo->query("SELECT SUM(stock_total) as total_livres FROM livre");
-     $total_livres = $stmtLivres->fetch()['total_livres'] ?? 0;
+    $sql_count = "SELECT COUNT(*) as total FROM livre";
+    $stmt_count = $pdo->query($sql_count);
+    $resultat = $stmt_count->fetch();
+    $total_livres = $resultat['total'];
 
     // 2. NOmbre d'etudiants inscrits
     $stmtUsers = $pdo->query("SELECT COUNT(id_utilisateur) as total_users FROM utilisateur WHERE role = 'user'");

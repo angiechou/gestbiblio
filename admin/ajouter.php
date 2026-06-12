@@ -20,11 +20,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['ajouter_livre'])) {
     
     if (!empty($titre) && !empty($auteur)) {
         try {
-            $stmt = $pdo->prepare("INSERT INTO livre (titre, auteur, stock_total, stock_dispo) VALUES (?, ?, ?, ?)");
-            if ($stmt->execute([$titre, $auteur])) {
-                $success = "Le livre « $titre » a bien été ajouté au catalogue.";
-            }
-        } catch (PDOException $e) {
+            $sql = "INSERT INTO livre (titre, auteur, stock_total, stock_dispo, date_creation) VALUES (?, ?, ?, ?, NOW())";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([$titre, $auteur, $stock_total, $stock_total]);
+            $success = "Le livre « $titre » a bien été ajouté au catalogue.";
+            } catch (PDOException $e) {
             $error = "Erreur lors de l'ajout du livre : " . $e->getMessage();
         }
     } else {

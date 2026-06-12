@@ -5,9 +5,10 @@ if (!isset($_SESSION['user'])) {
     exit;
 }
 
-// Définition du chemin de base dynamique pour éviter les erreurs 404 selon si on est dans admin/ ou à la racine
-$base_path = (basename($_SERVER['PHP_SELF']) == 'profil.php') ? '' : '../';
-$avatar_path = $base_path . 'assets/uploads/' . htmlspecialchars($_SESSION['user']['photo']);
+// On définit l'image par défaut si aucune photo n'est présente en session
+$avatar_nom = !empty($_SESSION['user']['photo']) ? $_SESSION['user']['photo'] : 'default.png';
+
+$avatar_path = '../includes/assets/uploads/' . htmlspecialchars($avatar_nom);
 
 $avatar = $_SESSION['user']['photo'] ? $_SESSION['user']['photo'] : 'default.png';
 ?>
@@ -82,25 +83,19 @@ $avatar = $_SESSION['user']['photo'] ? $_SESSION['user']['photo'] : 'default.png
 
 <div class="top-header">
     <div class="header-left">
-        <h2>GESTBIBLIO</h2>
+        <a href="#" onclick="window.location.reload(); return false;">
+           <img src="../includes/assets/images/logo.png" alt="Logo GESTBIBLIO" style="height: 50px;">
+        </a>
     </div>
     <div class="header-right" onclick="toggleDropdown()">
         <span><?php echo htmlspecialchars($_SESSION['user']['username']); ?></span>
         <img src="<?php echo $avatar_path; ?>" alt="Photo" class="profile-img">
         
         <div class="dropdown-menu" id="profileDropdown">
-            <a href="<?php echo $base_path; ?>profil.php">Mon Profil</a> <!-- Lien vers le profil[cite: 3] -->
-            <a href="<?php echo $base_path; ?>index.php?action=logout">Déconnexion</a> <!-- Destruction de session -->
+            <a href="/gestbiblio/includes/profil.php">Mon Profil</a>
+            <a href="/gestbiblio/includes/logout.php">Déconnexion</a>
         </div>
     </div>
-    <div class="header">
-    <div class="project-name">GESTBIBLIO</div>
-    <div class="user-profile-box">
-        <!-- Affichage de la photo de profil issue de la base de données -->
-        <img src="../uploads/avatars/<?php echo $avatar; ?>" alt="Photo" class="avatar-img" style="width: 40px; height: 40px; border-radius: 50%;">
-        <span>Bienvenue, <strong><?php echo htmlspecialchars($_SESSION['user']['username']); ?></strong> (<?php echo strtoupper($_SESSION['user']['role']); ?>)</span>
-    </div>
-</div>
 </div>
 
 <script>
