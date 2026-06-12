@@ -1,5 +1,7 @@
-CREATE DATABASE IF NOT EXISTS bibliotheque;
-USE bibliotheque;
+/*CREATE DATABASE IF NOT EXISTS bibliotheque;
+USE bibliotheque;*/
+
+USE if0_42165329_bibliotheque;
 
 CREATE TABLE `utilisateur` (
   `id_utilisateur` int(11) PRIMARY KEY AUTO_INCREMENT NOT NULL,
