@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['ajouter_livre'])) {
     
     if (!empty($titre) && !empty($auteur)) {
         try {
-            $sql = "INSERT INTO livre (titre, auteur, stock_total, stock_dispo, date_creation) VALUES (?, ?, ?, ?, NOW())";
+            $sql = "INSERT INTO livre (titre, auteur, stock_total, stock_dispo) VALUES (?, ?, ?, ?)";
             $stmt = $pdo->prepare($sql);
             $stmt->execute([$titre, $auteur, $stock_total, $stock_total]);
             $success = "Le livre « $titre » a bien été ajouté au catalogue.";
