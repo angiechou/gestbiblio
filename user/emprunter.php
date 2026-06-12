@@ -10,7 +10,7 @@ require '../config/database.php';
 // Vérifier si un ID de livre a été transmis en paramètre URL
 if (isset($_GET['id_livre'])) {
     $livre_id = intval($_GET['id_livre']);
-    $user_id = $_SESSION['user']['id_livre'];
+    $user_id = $_SESSION['user']['id_utilisateur'];
 
     try {
         // 1. Vérifier si le livre existe et s'il est réellement disponible (sécurité supplémentaire)

@@ -98,6 +98,6 @@ $role = $_SESSION['user']['role'];
     <?php endif; ?>
 
     <div class="menu-divider">Mon Compte</div>
-    <a href="../profil.php">Modifier mon Profil</a>
-    <a href="../index.php" style="color: #e74c3c;">Déconnexion</a>
+    <a href="/gestbiblio/includes/profil.php">Modifier mon Profil</a>
+    <a href="../includes/logout.php" style="color: #e74c3c;">Déconnexion</a>
 </div>

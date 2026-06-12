@@ -11,6 +11,16 @@ require '../config/database.php';
 $message = '';
 $erreur = '';
 
+if (isset($_POST['btn_modifier'])) {
+    $id = intval($_POST['id_livre']);
+    $stock = intval($_POST['nouveau_stock']);
+    
+    // Mise à jour du stock
+    $stmt = $pdo->prepare("UPDATE livre SET stock_total = ?, stock_dispo = ? WHERE id_livre = ?");
+    $stmt->execute([$stock, $stock, $id]);
+    $message = "Stock mis à jour avec succès.";
+}
+
 // Traitement de l'action de suppression (Retrait)
 if (isset($_GET['action']) && $_GET['action'] == 'retirer' && isset($_GET['id_livre'])) {
     $livre_id = intval($_GET['id_livre']);
@@ -24,7 +34,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'retirer' && isset($_GET['id_li
         if ($livre) {
             // VERROUILLAGE LOGIQUE : Bloquer si le stock disponible est inférieur au stock total initial[cite: 1, 3]
             if ($livre['stock_dispo'] < $livre['stock_total']) {
-                $erreur = "Action interdite : Le livre « {$livre['titre']} » est en cours d'emprunt et ne peut pas être retiré.";[cite: 1, 3]
+                $erreur = "Action interdite : Le livre « {$livre['titre']} » est en cours d'emprunt et ne peut pas être retiré.";
             } else {
                 // Suppression autorisée
                 $stmtDelete = $pdo->prepare("DELETE FROM livre WHERE id_livre = ?");
@@ -81,7 +91,7 @@ $livres = $pdo->query("SELECT * FROM livre ORDER BY id_livre DESC")->fetchAll();
                             <td><?php echo $l['stock_total']; ?></td>
                             <td>
                                 <?php if ($l['stock_dispo'] > 0): ?>
-                                    <span class="badge badge-success">En Rayon (<?php echo $l['stock_dispo']; ?>)</span>[cite: 1]
+                                    <span class="badge badge-success">En Rayon (<?php echo $l['stock_dispo']; ?>)</span>
                                 <?php else: ?>
                                     <span class="badge badge-danger">Indisponible (0)</span>[cite: 1]
                                 <?php endif; ?>
@@ -89,11 +99,29 @@ $livres = $pdo->query("SELECT * FROM livre ORDER BY id_livre DESC")->fetchAll();
                             
                             <td>
                                 <!-- Bouton pour modifier le stock -->
-                                <a href="modifier.php?id=<?php echo $l['id_livre']; ?>" class="btn-edit">Modifier</a>
-                                <!-- Bouton rouge de retrait avec confirmation JS réglementaire[cite: 3] -->
-                                <a href="catalogue.php?action=retirer&id=<?php echo $l['id_livre']; ?>" class="btn-delete" onclick="return confirm('Êtes-vous certain de vouloir supprimer définitivement ce livre ?');">Retirer</a>[cite: 3]
+                                    <!-- Bouton modifié pour ouvrir la fenêtre au lieu d'aller sur une autre page -->
+                                    <button type="button" class="btn-edit" 
+                                            onclick="document.getElementById('modalModifier').style.display='block'; document.getElementById('modal_id').value='<?php echo $l['id_livre']; ?>';">
+                                        Modifier
+                                    </button>
+                                <!-- Bouton rouge de retrait -->
+                                     <button type="button" class="btn-edit">
+                                          <a href="catalogue.php?action=retirer&id_livre=<?php echo $l['id_livre']; ?>" class="btn-delete" onclick="return confirm('Êtes-vous certain de vouloir supprimer définitivement ce livre ?');">Retirer</a>
+                                    </button>
                             </td>
                         </tr>
+
+                        <div id="modalModifier" style="display:none; position:fixed; top:20%; left:30%; background:white; padding:20px; border:1px solid #ccc; z-index:1000;">
+                            <h3>Modifier le stock</h3>
+                            <form method="POST" action="catalogue.php">
+                                <input type="hidden" name="id_livre" id="modal_id">
+                                <label>Nouveau stock total :</label>
+                                <input type="number" name="nouveau_stock" required>
+                                <br><br>
+                                <button type="submit" name="btn_modifier">Enregistrer</button>
+                                <button type="button" onclick="document.getElementById('modalModifier').style.display='none'">Annuler</button>
+                            </form>
+                        </div>
                     <?php endforeach; ?>
                 <?php else: ?>
                     <tr>

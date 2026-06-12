@@ -13,7 +13,7 @@ $today = date('Y-m-d');
 
 // Récupération des emprunts de l'utilisateur connecté avec les infos du livre
 $query = "SELECT e.*, l.titre, l.auteur 
-          FROM emprunt e 
+          FROM emprunter e 
           JOIN livre l ON e.id_livre = l.id_livre 
           WHERE e.id_utilisateur = ? 
           ORDER BY e.date_demande DESC";

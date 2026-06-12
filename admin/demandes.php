@@ -13,53 +13,54 @@ $message = null;
 $erreur = '';
 
 // Action de validation de l'emprunt
-if (isset($_GET['action']) && $_GET['action'] == 'confirmer' && isset($_GET['id_livre'])) {
-    $emprunt_id = intval($_GET['id_livre']);
+if (isset($_GET['action']) && isset($_GET['id'])) {
+    $action = $_GET['action']; // On récupère l'action (valider ou refuser)
+    $emprunt_id = intval($_GET['id']); // On récupère l'ID de l'emprunt
 
     try {
-        // Commencer une transaction pour sécuriser la double opération (Update Emprunt + Update Stock)
         $pdo->beginTransaction();
+        
+        // Récupérer l'ID du livre et le statut actuel pour vérification
+        $stmtEmp = $pdo->prepare("SELECT id_livre, statut FROM emprunter WHERE id_emprunt = ?");
+        $stmtEmp->execute([$emprunt_id]);
+        $empruntEnCours = $stmtEmp->fetch();
 
-        // Récupérer l'ID du livre associé à cet emprunt
-        $stmtEmp = $pdo->prepare("SELECT id_livre FROM emprunter WHERE id_utilisateur = ? AND statut = 'en_attente'");
-        $stmtEmp->execute([$id_emprunt]);
-        $emprunt = $stmtEmp->fetch();
-
-        if ($emprunt) {
-            $id_livre = $emprunt['id_livre'];
+        if ($empruntEnCours) {
+            $id_livre = $empruntEnCours['id_livre'];
 
             if ($action === 'valider' && $empruntEnCours['statut'] === 'en_attente') {
-            // Calcul strict du délai : Date du jour + 10 jours
-            $date_retour = date('Y-m-d', strtotime('+10 days'));
+                $date_retour = date('Y-m-d', strtotime('+10 days'));
+                
+                // Mettre à jour l'emprunt
+                $stmtUpdateEmp = $pdo->prepare("UPDATE emprunter SET statut = 'confirme', date_retour = ? WHERE id_emprunt = ?");
+                $stmtUpdateEmp->execute([$date_retour, $emprunt_id]);
 
-            // 1. Mettre à jour la table emprunts
-            $stmtUpdateEmp = $pdo->prepare("UPDATE emprunter SET statut = 'confirme', date_retour= ? WHERE id_livre = ?");
-            $stmtUpdateEmp->execute([$date_retour, $id_emprunt]);
-
-            // 2. Diminuer le stock disponible du livre concerné de 1
-            $stmtUpdateStock = $pdo->prepare("UPDATE livre SET stock_dispo = stock_dispo - 1 WHERE id_livre = ?");
-            $stmtUpdateStock->execute([$id_livre]);
-
+                // Diminuer le stock
+                $stmtUpdateStock = $pdo->prepare("UPDATE livre SET stock_dispo = stock_dispo - 1 WHERE id_livre = ?");
+                $stmtUpdateStock->execute([$id_livre]);
+                
+                $message = "Emprunt validé avec succès.";
+            } 
+            elseif ($action === 'refuser') {
+                // Supprimer ou marquer comme refusé
+                $stmtDelete = $pdo->prepare("UPDATE emprunter SET statut = 'refuse' WHERE id_emprunt = ?");
+                $stmtDelete->execute([$emprunt_id]);
+                $message = "La demande a été refusée.";
+            }
             $pdo->commit();
-            $message = "L'emprunt a été validé avec succès. Le retour est attendu pour le " . date('d/m/Y', strtotime($date_retour)) . ".";
-        } else {
-            $pdo->rollBack();
-            $erreur = "Cette demande d'emprunt a déjà été traitée ou n'existe pas.";
         }
     } catch (PDOException $e) {
         $pdo->rollBack();
-        $erreur = "Une erreur est survenue lors de la validation : " . $e->getMessage();
+        $erreur = "Erreur : " . $e->getMessage();
     }
 }
-
-// Récupération des demandes d'emprunt en attente
-$query = "SELECT e.id_emprunt, e.date_demande, u.username, u.email, l.titre 
-          FROM emprunter e 
-          JOIN utilisateur u ON e.id_utilisateur = u.id_utilisateur
-          JOIN livre l ON e.id_livre = l.id_livre
-          WHERE e.statut = 'en_attente' 
-          ORDER BY e.date_demande DESC";
-$emprunt = $pdo->query($query)->fetchAll();
+        // Récupération des demandes d'emprunt
+        $query = "SELECT e.id_emprunt, e.date_demande, e.statut, e.date_retour, u.username, u.email, l.titre 
+                FROM emprunter e 
+                JOIN utilisateur u ON e.id_utilisateur = u.id_utilisateur
+                JOIN livre l ON e.id_livre = l.id_livre
+                ORDER BY e.date_demande DESC";
+        $emprunt = $pdo->query($query)->fetchAll();
 ?>
 
 <!DOCTYPE html>
@@ -83,16 +84,18 @@ $emprunt = $pdo->query($query)->fetchAll();
 
         <table>
             <thead>
-                <tr>
+                <tr>          
                     <th>Date demande</th>
                     <th>Nom de l'étudiant</th>
                     <th>Ouvrage sollicité</th>
+                    <th>Statut</th>
+                    <th>Date de retour</th>
                     <th>Action</th>
                 </tr>
             </thead>
             <tbody>
-                  <?php if (count($emprunts) > 0): ?>
-                    <?php foreach ($emprunts as $emp): ?>
+                  <?php if (count($emprunt) > 0): ?>
+                    <?php foreach ($emprunt as $emp): ?>
                         <tr>
                             <td><?php echo date('d/m/Y H:i', strtotime($emp['date_demande'])); ?></td>
                             <td><strong><?php echo htmlspecialchars($emp['username']); ?></strong></td>

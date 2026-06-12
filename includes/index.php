@@ -1,16 +1,19 @@
 <?php
+
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 session_start();
 
 if (isset($_SESSION['user'])) {
     if ($_SESSION['user']['role'] === 'admin') {
-        header("Location: admin/dashboard.php");
+        header("Location:../admin/dashboard.php");
     } else {
-        header("Location: user/dashboard.php");
+        header("Location:../user/dashboard.php");
     }
     exit;
 }
 
-require 'config/database.php';
+require '../config/database.php';
 
 $erreur = null;
 $mode = isset($_GET['action']) && $_GET['action'] == 'inscription' ? 'inscription' : 'connexion';
@@ -42,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     'photo' => 'default.png'
                 ];
                 
-                header('Location: user/dashboard.php');
+                header('Location:../user/dashboard.php');
                 exit;
             }
         } catch (PDOException $e) {
@@ -70,9 +73,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             
             // Redirection dynamique selon le rôle
             if ($user['role'] === 'admin') {
-                header('Location: admin/dashboard.php');
+                header('Location:../admin/dashboard.php');
             } else {
-                header('Location: user/dashboard.php');
+                header('Location:../user/dashboard.php');
             }
             exit;
         } else {

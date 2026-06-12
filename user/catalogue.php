@@ -39,7 +39,7 @@ $livres = $pdo->query($query)->fetchAll();
                         </div>
                         
                         <?php if ($l['stock_dispo'] > 0): ?>
-                            <a href="emprunter.php?id=<?php echo $l['id_livre']; ?>" class="btn-action btn-available">Demander l'emprunt</a>
+                            <a href="emprunter.php?id_livre=<?php echo $l['id_livre']; ?>" class="btn-action btn-available">Demander l'emprunt</a>
                         <?php else: ?>
                             <button class="btn-action btn-unavailable" disabled>Indisponible</button>
                         <?php endif; ?>

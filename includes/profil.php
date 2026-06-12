@@ -1,6 +1,6 @@
 <?php
 session_start();
-require 'config/database.php';
+require '../config/database.php';
 
 if (!isset($_SESSION['user'])) {
     header("Location: index.php");
@@ -12,9 +12,10 @@ $message = '';
 $erreur = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = $_POST['username'];
-    $email = $_POST['email'];
-    $nom_photo = $_SESSION['user']['photo']; // Par défaut, on garde l'ancienne
+    // On vérifie si la clé existe avant de l'assigner
+    $username = isset($_POST['username']) ? $_POST['username'] : $_SESSION['user']['username'];
+    $email = isset($_POST['email']) ? $_POST['email'] : $_SESSION['user']['email'];
+}
 
 // Traitement des formulaires de mise à jour
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -91,8 +92,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     
 </head>
 
-    <?php include 'includes/sidebar.php'; ?>
-    <?php include 'includes/header.php'; ?>
+    <?php include 'sidebar.php'; ?>
+    <?php include 'header.php'; ?>
 
     <div class="main-content">
         <h2>Gestion du Profil</h2>
