@@ -92,8 +92,8 @@ $avatar = $_SESSION['user']['photo'] ? $_SESSION['user']['photo'] : 'default.png
         <img src="<?php echo $avatar_path; ?>" alt="Photo" class="profile-img">
         
         <div class="dropdown-menu" id="profileDropdown">
-            <a href="/gestbiblio/includes/profil.php">Mon Profil</a>
-            <a href="/gestbiblio/includes/logout.php">Déconnexion</a>
+            <a href="/includes/profil.php">Mon Profil</a>
+            <a href="/includes/logout.php">Déconnexion</a>
         </div>
     </div>
 </div>
